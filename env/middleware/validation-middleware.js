@@ -1,86 +1,46 @@
-// initialization
-const {
-  modules,
-  files,
-  functions,
-  routes,
-  constants,
-} = require('../utils/access');
+// environment files
+const constants = require('../constants/constants');
 
 // modules
-const Joi = modules.JOI;
+const Joi = require('@hapi/joi');
 
 // constants
 const { scopes } = constants.validation;
 
 // errors
-const MissingValidationInformationSchemaError = require(files.MISSING_VALIDATION_INFORMATION_SCHEMA_ERROR);
-const RouteValidationError = require(files.ROUTE_VALIDATION_ERROR);
-
-const getValidationSchema = (model, scope) => {
-  const { [constants.validation.joiModelValidation]: joiValidator } = model;
-  if (!joiValidator) {
-    throw new MissingValidationInformationSchemaError(
-      `No validation schemas for ${model.modelName} model`
-    );
-  }
-  const { scopes } = joiValidator();
-  if (!scopes) {
-    return joiValidator();
-  }
-
-  const validationSchema = scopes[scope];
-  if (!validationSchema) {
-    throw new MissingValidationInformationSchemaError(
-      `No scope ${scope} on ${model.modelName} model`
-    );
-  }
-  return validationSchema;
-};
+const MissingValidationInformationSchemaError = require('../errors/missing-validation-information-schema-error');
+const RouteValidationError = require('../errors/route-validation-error');
 
 module.exports = {
-  validateWithModel(model, scope = scopes.DEFAULT, options = {}) {
+  validateRequestData(validationObject, scope, options = {}) {
     return (req, res, next) => {
       const { body } = req;
       let validationSchema;
       try {
-        validationSchema = getValidationSchema(model, scope);
+        validationSchema =
+          validationObject[scope] || validationObject[scopes.DEFAULT];
       } catch (err) {
-        next(err);
+        return next(
+          new MissingValidationInformationSchemaError(
+            err.message || `No validation schema found`
+          )
+        );
       }
-      Joi.validate(
-        body,
-        validationSchema,
-        { ...options, allowUnknown: true },
-        (err, value) => {
-          return err === null
-            ? next()
-            : next(
-                new RouteValidationError(
-                  err.message || `Route validation error on `
-                )
-              );
-        }
-      );
-    };
-  },
-  validateWithSchema(validationSchema, scope = scopes.DEFAULT, options = {}) {
-    return (req, res, next) => {
-      const { body } = req;
-      Joi.validate(
-        body,
-        validationSchema,
-        { ...options, allowUnknown: true },
-        (err, value) => {
-          return err === null
-            ? next()
-            : next(
-                new RouteValidationError(
-                  err.message || `Route validation error on `
-                )
-              );
-        }
-      );
+
+      const validationResult = Joi.validate(body, validationSchema, {
+        ...options,
+        allowUnknown: true,
+      });
+
+      if (!validationResult.error) {
+        return next();
+      } else {
+        return next(
+          new RouteValidationError(
+            validationResult.error.message || `Route validation error`
+          )
+        );
+      }
     };
   },
 };
