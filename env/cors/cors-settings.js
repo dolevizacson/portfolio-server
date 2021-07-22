@@ -11,7 +11,7 @@ if (process.env.NODE_ENV === 'production') {
   options = {
     ...options,
     origin: function (origin, callback) {
-      if (whitelist.indexOf(origin) !== -1) {
+      if (whitelist.indexOf(origin) !== -1 || !origin) {
         callback(null, true);
       } else {
         callback(new Error('Not allowed by CORS'));
