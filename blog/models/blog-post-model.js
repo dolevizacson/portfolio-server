@@ -1,31 +1,11 @@
-// initialization
-const {
-  modules,
-  files,
-  functions,
-  routes,
-  constants,
-} = require('../../env/utils/access');
+// environment files
+const functions = require('../../env/functions/functions');
+const constants = require('../../env/constants/constants');
 
 // modules
-const mongoose = modules.MONGOOSE;
-
-// files
-const blogPostModelValidation = require(files.BLOG_POST_MODEL_VALIDATION);
-const baseSchema = require(files.BASE_SCHEMA);
-
-// constants
-const { scopes, joiModelValidation } = constants.validation;
+const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
-
-const modelName = 'blogPost';
-
-const paragraphSchema = new Schema({
-  header: String,
-  content: { type: String, required: true },
-  //image
-});
 
 const baseBlogPostSchema = new Schema({
   header: { type: String, required: true },
@@ -36,28 +16,22 @@ const baseBlogPostSchema = new Schema({
   },
   conclusionSentence: String,
   paragraph: {
-    type: [paragraphSchema],
+    type: [
+      {
+        header: String,
+        content: { type: String, required: true },
+        //image
+      },
+    ],
     validate: (paragraphArray) =>
       paragraphArray == null || paragraphArray.length > 0,
   },
 });
 
-const blogPostSchema = functions.helpers.addBaseSchemaFields(
-  baseSchema,
-  baseBlogPostSchema
+const blogPostSchema =
+  functions.helpers.addBaseSchemaFields(baseBlogPostSchema);
+
+module.exports = mongoose.model(
+  constants.modelsNames.BLOG_POST,
+  blogPostSchema
 );
-
-// validation
-blogPostSchema.static(joiModelValidation, function () {
-  return {
-    scopes: {
-      [scopes.blogPost.DEFAULT]:
-        blogPostModelValidation.defaultValidationSchema,
-      [scopes.blogPost.UPDATE]: blogPostModelValidation.updateValidationSchema,
-    },
-  };
-});
-
-mongoose.model(modelName, blogPostSchema, modelName);
-
-module.exports = modelName;
