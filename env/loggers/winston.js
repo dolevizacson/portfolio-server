@@ -2,7 +2,7 @@
 const appRoot = require('app-root-path');
 const winston = require('winston');
 
-require('rotating-file-stream');
+require('winston-daily-rotate-file');
 
 const { combine, timestamp, errors, colorize, printf } = winston.format;
 
