@@ -1,23 +1,15 @@
-const {
-  modules,
-  files,
-  functions,
-  routes,
-  classes,
-} = require('../../env/utils/access');
-
 // files
-const mailer_agent = require(files.MAILER_AGENT);
+const mailer = require('../../env/mailer-agent/mailer-agent');
 
 // errors
-const MailNotSentError = require(files.MAIL_NOT_SENT_ERROR);
+const MailNotSentError = require('../../env/errors/mail-not-sent-error');
 
 module.exports = class MailerService {
   async sendMail(mail) {
-    const mailer = mailer_agent();
+    const mailerTransporter = mailer.getMailerTransporter();
 
     try {
-      const response = await mailer.sendMail({
+      const response = await mailerTransporter.sendMail({
         ...mail,
         to: process.env.CONTACT_EMAIL,
       });

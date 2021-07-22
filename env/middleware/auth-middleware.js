@@ -1,26 +1,23 @@
-// initialization
-const { modules, files, functions, routes } = require('../utils/access');
-
 // modules
-const passport = modules.PASSPORT;
+const passport = require('passport');
 
 // errors
-const UserAuthenticationError = require(files.USER_AUTHENTICATION_ERROR);
+const UserAuthenticationError = require('../errors/user-authentication-error');
 
 module.exports = {
   authenticate(req, res, next) {
-    passport.authenticate('local', function(err, user, info) {
+    passport.authenticate('local', function (err, user, info) {
       if (err) {
-        return next(new Error('problem in authentication proccess'));
+        return next(new Error('problem in authentication process'));
       }
 
       if (!user) {
         return next(new UserAuthenticationError('failed to login'));
       }
 
-      req.logIn(user, function(err) {
+      req.logIn(user, function (err) {
         if (err) {
-          return next(new Error('problem in login proccess'));
+          return next(new Error('problem in login process'));
         }
         next();
       });

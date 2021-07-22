@@ -1,7 +1,4 @@
-// initialization
-const { modules, files, routes } = require('../utils/access');
-
 // files
-const helpersFunctions = require(files.HELPERS_FUNCTIONS);
+const helpersFunctions = require('./helpers-functions');
 
 module.exports.helpers = helpersFunctions;

@@ -1,12 +1,9 @@
-// initialization
-const { modules, files, functions, routes } = require('../utils/access');
-
 // modules
-const sessions = modules.SESSIONS;
-const mongoStore = modules.MONGO_STORE(sessions);
-const mongoose = modules.MONGOOSE;
+const sessions = require('express-session');
+const mongoStore = require('connect-mongo')(sessions);
+const mongoose = require('mongoose');
 
-const optios = {
+const options = {
   name: process.env.SESSIONS_COOKIE_NAME,
   secret: process.env.SESSIONS_SECRET,
   saveUninitialized: false,
@@ -23,4 +20,4 @@ const optios = {
   }),
 };
 
-module.exports = sessions(optios);
+module.exports = sessions(options);

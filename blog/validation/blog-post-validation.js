@@ -1,17 +1,14 @@
-// initialization
-const {
-  modules,
-  files,
-  functions,
-  routes,
-  constants,
-} = require('../../env/utils/access');
+// environment files
+const constants = require('../../env/constants/constants');
 
 // modules
-const Joi = modules.JOI;
+const Joi = require('@hapi/joi');
+
+// constants
+const { scopes } = constants.validation;
 
 module.exports = {
-  defaultValidationSchema: Joi.object().keys({
+  [scopes.DEFAULT]: Joi.object().keys({
     header: Joi.string().required(),
     summery: Joi.string().required(),
     paragraph: Joi.array()
@@ -29,7 +26,7 @@ module.exports = {
     conclusionSentence: Joi.string().allow(''),
   }),
 
-  updateValidationSchema: Joi.object().keys({
+  [scopes.UPDATE]: Joi.object().keys({
     _id: Joi.string().required(),
     active: Joi.number(),
     date: Joi.date(),

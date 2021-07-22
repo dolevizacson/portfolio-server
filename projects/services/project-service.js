@@ -1,23 +1,13 @@
-// initialization
-const {
-  modules,
-  files,
-  functions,
-  routes,
-  classes,
-} = require('../../env/utils/access');
-
+// environment files
+const classes = require('../../env/classes/classes');
 // files
-const ProjectModel = require(files.PROJECT_MODEL);
+const ProjectModel = require('../models/project-model');
 
 // classes
 const DBcrud = classes.DBcrud;
 
-// models
-const projectModel = functions.helpers.getMongooseModel(ProjectModel);
-
 module.exports = class ProjectsService extends DBcrud {
   constructor() {
-    super(projectModel);
+    super(ProjectModel);
   }
 };

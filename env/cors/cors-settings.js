@@ -1,8 +1,5 @@
-// initialization
-const { modules, files, functions, routes } = require('../utils/access');
-
 // modules
-const cors = modules.CORS;
+const cors = require('cors');
 
 let options = {
   origin: true,
@@ -13,7 +10,7 @@ if (process.env.NODE_ENV === 'production') {
   const whitelist = process.env.CORS_WHITE_LIST.split(' ');
   options = {
     ...options,
-    origin: function(origin, callback) {
+    origin: function (origin, callback) {
       if (whitelist.indexOf(origin) !== -1) {
         callback(null, true);
       } else {

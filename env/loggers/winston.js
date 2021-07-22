@@ -1,13 +1,12 @@
-// initialization
-const { modules, files, functions, routes } = require('../utils/access');
-
 // modules
-const appRoot = modules.APPROOT;
-const winston = modules.WINSTON;
-modules.WRFS;
-const { combine, timestamp, splat, errors, colorize, printf } = winston.format;
+const appRoot = require('app-root-path');
+const winston = require('winston');
 
-const printFunction = data => {
+require('rotating-file-stream');
+
+const { combine, timestamp, errors, colorize, printf } = winston.format;
+
+const printFunction = (data) => {
   return JSON.stringify(
     data,
     (key, value) => {
@@ -15,6 +14,9 @@ const printFunction = data => {
         let stackTrace = value.split('\n');
         stackTrace.shift();
         return stackTrace;
+      } else if (key === 'message') {
+        let formattedMessage = value.split('\n');
+        return formattedMessage[0];
       } else {
         return value;
       }
@@ -25,14 +27,13 @@ const printFunction = data => {
 
 const formatArgs = [
   timestamp({
-    format: 'YYYY-MM-DD HH:mm:ss',
+    format: 'HH:mm:ss DD-MM-YYYY ',
   }),
   errors({ stack: true }),
-  splat(),
   printf(printFunction),
 ];
 
-let options = {
+let commonOptions = {
   exitOnError: false,
 };
 
@@ -53,18 +54,24 @@ if (process.env.NODE_ENV === 'production') {
     filename: 'exception.log',
   });
 
+  const promiseRejectionFile = new winston.transports.DailyRotateFile({
+    ...errorsFilesOptions,
+    filename: 'rejection.log',
+  });
+
   options = {
-    ...options,
+    ...commonOptions,
     level: 'info',
     transports: [file],
     exceptionHandlers: [exceptionFile],
+    rejectionHandlers: [promiseRejectionFile],
     format: combine(...formatArgs),
   };
 } else {
   const console = new winston.transports.Console({ handleExceptions: true });
 
   options = {
-    ...options,
+    ...commonOptions,
     level: 'debug',
     transports: [console],
     format: combine(...formatArgs, colorize({ all: true })),

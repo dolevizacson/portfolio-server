@@ -1,20 +1,17 @@
-// initialization
-const {
-  modules,
-  files,
-  functions,
-  routes,
-  constants,
-} = require('../../env/utils/access');
+// environment files
+const constants = require('../../env/constants/constants');
 
 // modules
-const Joi = modules.JOI;
+const Joi = require('@hapi/joi');
 
-module.exports = Joi.object().keys({
-  from: Joi.string()
-    .email()
-    .required(),
-  subject: Joi.string(),
-  text: Joi.string(),
-  attachments: Joi.array().max(0),
-});
+// constants
+const { scopes } = constants.validation;
+
+module.exports = {
+  [scopes.DEFAULT]: Joi.object().keys({
+    from: Joi.string().email().required(),
+    subject: Joi.string(),
+    text: Joi.string(),
+    attachments: Joi.array().max(0),
+  }),
+};

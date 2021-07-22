@@ -1,5 +1,8 @@
-// initialization
-const { modules, files, functions, routes } = require('../utils/access');
+// files
+const Controller = require('./Controller');
+const DBcrud = require('./DBcrud');
 
-module.exports.Controller = require(files.CONTROLLER);
-module.exports.DBcrud = require(files.BD_CRUD);
+module.exports = {
+  Controller,
+  DBcrud,
+};

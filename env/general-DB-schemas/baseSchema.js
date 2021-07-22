@@ -1,14 +1,5 @@
-// initialization
-const {
-  modules,
-  files,
-  functions,
-  routes,
-  constants,
-} = require('../../env/utils/access');
-
 // modules
-const mongoose = modules.MONGOOSE;
+const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
