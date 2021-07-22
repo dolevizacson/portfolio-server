@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "nodemon ./bin/www",
-    "start": "cross-env NODE_ENV=production node ./bin/www"
+    "start": "node ./bin/www",
+    "prud": "cross-env NODE_ENV=production node ./bin/www"
   },
   "dependencies": {
     "@hapi/joi": "^15.0.3",
