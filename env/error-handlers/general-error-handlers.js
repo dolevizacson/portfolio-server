@@ -3,6 +3,7 @@ const winston = require('../loggers/winston');
 
 // error handlers
 const loggerErrorHandler = (err, req, res, next) => {
+  console.err(err);
   winston.error(err);
   next(err);
 };
