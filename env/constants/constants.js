@@ -1,24 +1,16 @@
 module.exports = {
   validation: {
-    joiModelValidation: 'joiValidator',
     scopes: {
       DEFAULT: 'default',
-      blogPost: {
-        DEFAULT: 'default',
-        UPDATE: 'update',
-      },
-      skillsList: {
-        DEFAULT: 'default',
-        UPDATE: 'update',
-      },
-      taskListTask: {
-        DEFAULT: 'default',
-        UPDATE: 'update',
-      },
-      project: {
-        DEFAULT: 'default',
-        UPDATE: 'update',
-      },
+      UPDATE: 'update',
     },
+  },
+
+  modelsNames: {
+    USER: 'user',
+    BLOG_POST: 'blogPost',
+    PROJECT: 'project',
+    SKILLS: 'skillsList',
+    TASK_LIST: 'task',
   },
 };
