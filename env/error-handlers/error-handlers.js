@@ -1,11 +1,12 @@
-// initialization
-const { modules, files, functions, routes } = require('../utils/access');
+// files
+const generalErrorHandlers = require('./general-error-handlers');
+const specificErrorHandlers = require('./specific-error-handlers');
 
-// functions  TODO add functions constants
-const generalErrorHandlers = require(files.GENERAL_ERROR_HANDLERS);
-const specificErrorHandlers = require(files.SPECIFIC_ERROR_HANDLERS);
+const addErrorHandlers = (app) => {
+  generalErrorHandlers.addGeneralErrorHandlers(app);
+  specificErrorHandlers.addSpecificErrorHandlers(app);
+};
 
-module.exports.addErrorHandlers = function(app) {
-  generalErrorHandlers(app);
-  specificErrorHandlers(app);
+module.exports = {
+  addErrorHandlers,
 };

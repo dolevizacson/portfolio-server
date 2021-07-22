@@ -1,26 +1,31 @@
-// initialization
-const { modules, files, functions, routes } = require('../utils/access');
-
 // modules
-const express = modules.EXPRESS;
-const passport = modules.PASSPORT;
-const helmet = modules.HELMET;
+const express = require('express');
+const passport = require('passport');
+const helmet = require('helmet');
+const mongoSanitize = require('express-mongo-sanitize');
 
 //files
-const sessions = require(files.SESSIONS);
-const morgan = require(files.MORGAN);
-const cors = require(files.CORS);
+const sessions = require('../sessions/sessions-settings');
+const morgan = require('../loggers/morgan');
+const cors = require('../cors/cors-settings');
 
-module.exports = function appMiddleware(app) {
+const addAppMiddleware = (app) => {
   // express middleware
+  // json request parsing
   app.use(express.json());
+  // form request parsing
   app.use(express.urlencoded({ extended: false }));
 
   // middleware
+  app.use(mongoSanitize());
   app.use(morgan);
   app.use(helmet());
   app.use(sessions);
   app.use(passport.initialize());
   app.use(passport.session());
   app.use(cors);
+};
+
+module.exports = {
+  addAppMiddleware,
 };

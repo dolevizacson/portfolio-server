@@ -1,14 +1,10 @@
-// initialization
-const { modules, files, functions, routes } = require('../utils/access');
-
 // files
-const appMiddleware = require(files.APP_MIDDLEWARE);
-const authMiddleware = require(files.AUTH_MIDDLEWARE);
-const validationMiddleware = require(files.VALIDATION_MIDDLEWARE);
+const appMiddleware = require('./app-middleware');
+const authMiddleware = require('./auth-middleware');
+const validationMiddleware = require('./validation-middleware');
 
-module.exports.auth = authMiddleware;
-module.exports.validation = validationMiddleware;
-
-module.exports.addMiddleware = function(app) {
-  appMiddleware(app);
+module.exports = {
+  auth: authMiddleware,
+  validation: validationMiddleware,
+  addAppMiddleware: appMiddleware.addAppMiddleware,
 };

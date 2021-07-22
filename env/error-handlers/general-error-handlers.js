@@ -1,8 +1,5 @@
-// initialization
-const { modules, files, functions, routes } = require('../utils/access');
-
 // files
-const winston = require(files.WINSTON);
+const winston = require('../loggers/winston');
 
 // error handlers
 const loggerErrorHandler = (err, req, res, next) => {
@@ -10,6 +7,10 @@ const loggerErrorHandler = (err, req, res, next) => {
   next(err);
 };
 
-module.exports = function generalErrorHandlers(app) {
+const addGeneralErrorHandlers = (app) => {
   app.use(loggerErrorHandler);
+};
+
+module.exports = {
+  addGeneralErrorHandlers,
 };
