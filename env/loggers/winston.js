@@ -33,10 +33,6 @@ const formatArgs = [
   printf(printFunction),
 ];
 
-let commonOptions = {
-  exitOnError: false,
-};
-
 if (process.env.NODE_ENV === 'production') {
   const errorsFilesOptions = {
     dirname: `${appRoot}/logs`,
@@ -59,6 +55,13 @@ if (process.env.NODE_ENV === 'production') {
     filename: 'rejection.log',
   });
 
+  const console = new winston.transports.Console({ handleExceptions: true });
+
+  let commonOptions = {
+    exitOnError: false,
+    transports: [console],
+  };
+
   options = {
     ...commonOptions,
     level: 'info',
@@ -68,12 +71,9 @@ if (process.env.NODE_ENV === 'production') {
     format: combine(...formatArgs),
   };
 } else {
-  const console = new winston.transports.Console({ handleExceptions: true });
-
   options = {
     ...commonOptions,
     level: 'debug',
-    transports: [console],
     format: combine(...formatArgs, colorize({ all: true })),
   };
 }
