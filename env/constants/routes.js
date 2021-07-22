@@ -4,7 +4,7 @@ module.exports = {
   AUTH_LOGOUT: '/logout', // GET
   AUTH_LOGIN: '/login', // POST
   AUTH_IS_LOGGED_IN: '/isloggedin', //GET
-  AUTH_REGISTER: '/register', // POST
+  AUTH_REGISTER: '/register', // GET
 
   // CRUD
   READ_ALL_ACTIVE: '/active', // GET
