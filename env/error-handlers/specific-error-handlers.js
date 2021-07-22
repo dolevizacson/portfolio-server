@@ -1,111 +1,75 @@
-// initialization
-const { modules, files, functions, routes } = require('../utils/access');
-
 // modules
-const httpStatus = modules.HTTP_STATUS;
-const mongoose = modules.MONGOOSE;
+const httpStatus = require('http-status-codes');
+const mongoose = require('mongoose');
 
 // errors
-const NotFoundInDatabaseError = require(files.NOT_FOUND_IN_DATABASE_ERROR);
-const BadEndpointError = require(files.BAD_ENDPOINT_ERROR);
-const UserAuthenticationError = require(files.USER_AUTHENTICATION_ERROR);
-const MissingValidationInformationSchemaError = require(files.MISSING_VALIDATION_INFORMATION_SCHEMA_ERROR);
-const RouteValidationError = require(files.ROUTE_VALIDATION_ERROR);
-const MailNotSentError = require(files.MAIL_NOT_SENT_ERROR);
+const NotFoundInDatabaseError = require('../errors/not-found-in-database-error');
+const BadEndpointError = require('../errors/bad-endpoint-error');
+const UserAuthenticationError = require('../errors/user-authentication-error');
+const MissingValidationInformationSchemaError = require('../errors/missing-validation-information-schema-error');
+const RouteValidationError = require('../errors/route-validation-error');
+const MailNotSentError = require('../errors/mail-not-sent-error');
 
-// error handlers
-const notFoundInDatabaseErrorHandler = (err, req, res, next) => {
-  if (err instanceof NotFoundInDatabaseError) {
-    let errorMessage = 'Not found in database error ';
-
-    if (err.message) {
-      errorMessage += `: ${err.message}`;
-    }
-    return res.status(httpStatus.NOT_FOUND).send(errorMessage);
-  }
-  next(err);
-};
-
-const userAuthenticationErrorHandler = (err, req, res, next) => {
-  if (err instanceof UserAuthenticationError) {
-    let errorMessage = 'Authentication error ';
-
-    if (err.message) {
-      errorMessage += `: ${err.message}`;
-    }
-    return res.status(httpStatus.UNAUTHORIZED).send(errorMessage);
-  }
-  next(err);
-};
-
-const routesValidationErrorHandler = (err, req, res, next) => {
-  if (
-    err instanceof MissingValidationInformationSchemaError ||
-    err instanceof RouteValidationError
-  ) {
-    let errorMessage = 'Validation error ';
-
-    if (err.message) {
-      errorMessage += `: ${err.message}`;
-    }
-    return res.status(httpStatus.UNPROCESSABLE_ENTITY).send(errorMessage);
-  }
-  next(err);
-};
-
-const databaseValidationErrorHandler = (err, req, res, next) => {
-  if (
-    err instanceof mongoose.Error.ValidationError ||
-    err instanceof mongoose.Error.CastError ||
-    err instanceof mongoose.Error.ValidatorError
-  ) {
-    let errorMessage = 'Database validation error ';
-
-    if (err.message) {
-      errorMessage += `: ${err.message}`;
-    }
-    return res.status(httpStatus.UNPROCESSABLE_ENTITY).send(errorMessage);
-  }
-  next(err);
-};
-
-const badEndpointErrorHandler = (err, req, res, next) => {
-  if (err instanceof BadEndpointError) {
-    let errorMessage = 'Bad endpoint error ';
-
-    if (err.message && err.url) {
-      errorMessage += `: ${err.url} ${err.message}`;
-    }
-    return res.status(httpStatus.NOT_FOUND).send(errorMessage);
-  }
-  next(err);
-};
-
-const MailNotSentErrorHandler = (err, req, res, next) => {
-  if (err instanceof MailNotSentError) {
-    let errorMessage = 'Mail not sent error ';
-
-    if (err.message && err.url) {
-      errorMessage += `: ${err.url} ${err.message}`;
-    }
-    return res.status(httpStatus.NOT_FOUND).send(errorMessage);
-  }
-  next(err);
-};
-
-const DefaultErrorHandler = (err, req, res, next) => {
-  console.log(mongoose);
+const appSpecificErrorHandler = (err, req, res, next) => {
   let errorMessage = 'Internal Server Error';
-  return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(errorMessage);
-  next(err);
+
+  switch (true) {
+    case err instanceof NotFoundInDatabaseError:
+      errorMessage = 'Not found in database error';
+      if (err.message) {
+        errorMessage += ` : ${err.message}`;
+      }
+      return res.status(httpStatus.NOT_FOUND).send(errorMessage);
+
+    case err instanceof UserAuthenticationError:
+      errorMessage = 'Authentication error';
+      if (err.message) {
+        errorMessage += ` : ${err.message}`;
+      }
+      return res.status(httpStatus.UNAUTHORIZED).send(errorMessage);
+
+    case err instanceof MissingValidationInformationSchemaError:
+    case err instanceof RouteValidationError:
+      errorMessage = 'Validation error';
+      if (err.message) {
+        errorMessage += ` : ${err.message}`;
+      }
+      return res.status(httpStatus.UNPROCESSABLE_ENTITY).send(errorMessage);
+
+    case err instanceof mongoose.Error.ValidationError:
+    case err instanceof mongoose.Error.CastError:
+    case err instanceof mongoose.Error.ValidatorError:
+      errorMessage = 'Database validation error';
+      if (err.message) {
+        errorMessage += ` : ${err.message}`;
+      }
+      return res.status(httpStatus.UNPROCESSABLE_ENTITY).send(errorMessage);
+
+    case err instanceof BadEndpointError:
+      errorMessage = 'Bad endpoint error';
+      if (err.message && err.url) {
+        errorMessage += ` : ${err.url} ${err.message}`;
+      }
+      return res.status(httpStatus.NOT_FOUND).send(errorMessage);
+
+    case err instanceof MailNotSentError:
+      errorMessage = 'Mail not sent error';
+      if (err.message && err.url) {
+        errorMessage += ` : ${err.url} ${err.message}`;
+      }
+      return res.status(httpStatus.NOT_FOUND).send(errorMessage);
+
+    case err instanceof Error:
+      return res.status(httpStatus.INTERNAL_SERVER_ERROR).send(errorMessage);
+    default:
+      return next(err);
+  }
 };
 
-module.exports = function specificErrorHandlers(app) {
-  app.use(notFoundInDatabaseErrorHandler);
-  app.use(userAuthenticationErrorHandler);
-  app.use(routesValidationErrorHandler);
-  app.use(databaseValidationErrorHandler);
-  app.use(badEndpointErrorHandler);
-  app.use(MailNotSentErrorHandler);
-  app.use(DefaultErrorHandler);
+const addSpecificErrorHandlers = (app) => {
+  app.use(appSpecificErrorHandler);
+};
+
+module.exports = {
+  addSpecificErrorHandlers,
 };
