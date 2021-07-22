@@ -1,37 +1,24 @@
-// initialization
-const {
-  modules,
-  files,
-  functions,
-  routes,
-  constants,
-  classes,
-} = require('../../env/utils/access');
+// environment files
+const classes = require('../../env/classes/classes');
 
 //files
-const TaskListTaskService = require(files.TASK_LIST_TASK_SERVICE);
-const TaskListTaskModel = require(files.TASK_LIST_TASK_MODEL);
-
-// constants
-const { taskListTask: taskListTaskValidation } = constants.validation.scopes;
+const TaskListService = require('../services/task-list-service');
+const taskValidationObject = require('../validation/task-validation');
 
 // classes
 const Controller = classes.Controller;
 
 // services
-const taskListTaskService = new TaskListTaskService();
-
-//models
-const taskListTaskModel = functions.helpers.getMongooseModel(TaskListTaskModel);
+const taskListService = new TaskListService();
 
 const taskListController = new Controller(
-  taskListTaskService,
-  taskListTaskModel,
-  taskListTaskValidation
+  taskListService,
+  taskValidationObject
 );
 
+taskListController.getAll();
 taskListController.getAllActive();
-taskListController.getOneActive();
+taskListController.getOne();
 taskListController.post();
 taskListController.update();
 taskListController.toggle();

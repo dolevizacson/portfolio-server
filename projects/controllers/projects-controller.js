@@ -1,19 +1,9 @@
-// initialization
-const {
-  modules,
-  files,
-  functions,
-  routes,
-  constants,
-  classes,
-} = require('../../env/utils/access');
+// environment files
+const classes = require('../../env/classes/classes');
 
 // files
-const ProjectModel = require(files.PROJECT_MODEL);
-const ProjectService = require(files.PROJECT_SERVICE);
-
-// constants
-const { project: projectValidation } = constants.validation.scopes;
+const ProjectService = require('../services/project-service');
+const projectValidationObject = require('../validation/project-validation');
 
 // classes
 const Controller = classes.Controller;
@@ -21,13 +11,9 @@ const Controller = classes.Controller;
 // services
 const projectService = new ProjectService();
 
-// models
-const projectModel = functions.helpers.getMongooseModel(ProjectModel);
-
 const projectsController = new Controller(
   projectService,
-  projectModel,
-  projectValidation
+  projectValidationObject
 );
 
 projectsController.getAllActive();

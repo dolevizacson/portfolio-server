@@ -1,39 +1,28 @@
-// initialization
-const {
-  modules,
-  files,
-  functions,
-  routes,
-  constants,
-  classes,
-} = require('../../env/utils/access');
+// environment files
+const classes = require('../../env/classes/classes');
 
 //files
-const SkillsContentService = require(files.SKILLS_CONTENT_SERVICE);
-const SkillsListModel = require(files.SKILLS_LIST_MODEL);
-
-// constants
-const { skillsList: skillsListValidation } = constants.validation.scopes;
+const SkillsService = require('../services/skills-service');
+const skillsListValidationObject = require('../validation/skills-list-validation');
 
 // classes
 const Controller = classes.Controller;
 
 // services
-const skillsContentService = new SkillsContentService();
-
-//models
-const skillsListModel = functions.helpers.getMongooseModel(SkillsListModel);
+const skillsService = new SkillsService();
 
 const skillsController = new Controller(
-  skillsContentService,
-  skillsListModel,
-  skillsListValidation
+  skillsService,
+  skillsListValidationObject
 );
 
+skillsController.getAll();
 skillsController.getAllActive();
+skillsController.getOne();
 skillsController.getOneActive();
 skillsController.post();
 skillsController.update();
 skillsController.delete();
+skillsController.toggle();
 
 module.exports = skillsController.getRouter();

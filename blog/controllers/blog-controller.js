@@ -1,34 +1,17 @@
-// initialization
-const {
-  modules,
-  files,
-  functions,
-  routes,
-  constants,
-  classes,
-} = require('../../env/utils/access');
+// environment files
+const classes = require('../../env/classes/classes');
 
 // files
-const BlogPostModel = require(files.BLOG_POST_MODEL);
-const BlogPostService = require(files.BLOG_POST_SERVICE);
-
-// constants
-const { blogPost: blogPostValidation } = constants.validation.scopes;
+const BlogService = require('../services/blog-service');
+const blogPostValidationObject = require('../validation/blog-post-validation');
 
 // classes
 const Controller = classes.Controller;
 
-// models
-const blogPostModel = functions.helpers.getMongooseModel(BlogPostModel);
-
 // services
-const blogPostService = new BlogPostService();
+const blogService = new BlogService();
 
-const blogController = new Controller(
-  blogPostService,
-  blogPostModel,
-  blogPostValidation
-);
+const blogController = new Controller(blogService, blogPostValidationObject);
 
 blogController.getAllActive();
 blogController.getAll();
