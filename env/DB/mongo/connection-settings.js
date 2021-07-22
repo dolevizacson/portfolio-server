@@ -1,15 +1,20 @@
-// initialization
-const { modules, files, functions, routes } = require('../../utils/access');
-
 // modules
-const mongoose = modules.MONGOOSE;
+const mongoose = require('mongoose');
 
-module.exports = functions.helpers.asyncWrapper(async (req, res, next) => {
-  await mongoose.connect(process.env.MONGODB_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-    useFindAndModify: false,
-    useCreateIndex: true,
-  });
-  console.log('Mongo DB connected');
-});
+const mongoInit = () => {
+  try {
+    mongoose.connect(process.env.MONGODB_URI, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+      useCreateIndex: true,
+    });
+    console.log('Mongo DB connected');
+  } catch (error) {
+    console.error('Mongo DB initial connection Error');
+  }
+};
+
+module.exports = {
+  mongoInit,
+};

@@ -1,21 +1,20 @@
-// initialization
-const { modules, files, routes, constants } = require('../utils/access');
-
 // modules
-const mongoose = modules.MONGOOSE;
+const mongoose = require('mongoose');
+
+// files
+const baseSchema = require('../general-DB-schemas/baseSchema');
 
 const helpers = {
   asyncWrapper(fn) {
-    return (req, res, next) => {
-      Promise.resolve(fn(req, res, next)).catch(next);
+    return function (req, res, next) {
+      fn(req, res, next).catch((e) => next(e));
     };
   },
   getMongooseModel(modelName) {
     return mongoose.model(modelName);
   },
-  addBaseSchemaFields(baseSchema, schema) {
-    newSchema = baseSchema.clone();
-    return newSchema.add(schema);
+  addBaseSchemaFields(schema) {
+    return schema.add(baseSchema);
   },
 };
 
