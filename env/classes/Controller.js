@@ -1,23 +1,21 @@
-// initialization
-const {
-  modules,
-  files,
-  functions,
-  routes,
-  constants,
-} = require('../utils/access');
+// environment files
+const functions = require('../functions/functions');
+const routes = require('../constants/routes');
+const constants = require('../constants/constants');
 
 // modules
-const express = modules.EXPRESS;
-const httpStatus = modules.HTTP_STATUS;
+const express = require('express');
+const httpStatus = require('http-status-codes');
+
+// constants
+const { scopes } = constants.validation;
 
 module.exports = class Controller {
-  constructor(service, model, validationScope) {
+  constructor(service, validationObject) {
     this.service = service;
-    this.model = model;
-    this.validationScope = validationScope;
+    this.validationObject = validationObject;
     this.router = express.Router();
-    this.middleware = require(files.MIDDLEWARE);
+    this.middleware = require('../middleware/middleware');
   }
 
   getRouter() {
@@ -51,7 +49,6 @@ module.exports = class Controller {
   getOneActive() {
     this.router.get(
       routes.READ_ACTIVE,
-      this.middleware.auth.isLoggedIn,
       functions.helpers.asyncWrapper(async (req, res, next) => {
         const { id } = req.params;
         const data = await this.service.readOneActive(id);
@@ -64,6 +61,7 @@ module.exports = class Controller {
   getOne() {
     this.router.get(
       routes.READ,
+      this.middleware.auth.isLoggedIn,
       functions.helpers.asyncWrapper(async (req, res, next) => {
         const { id } = req.params;
         const data = await this.service.readOne(id);
@@ -77,12 +75,13 @@ module.exports = class Controller {
     this.router.post(
       routes.CREATE,
       this.middleware.auth.isLoggedIn,
-      this.middleware.validation.validateWithModel(
-        this.model,
-        this.validationScope.DEFAULT
+      this.middleware.validation.validateRequestData(
+        this.validationObject,
+        scopes.DEFAULT
       ),
       functions.helpers.asyncWrapper(async (req, res, next) => {
-        const data = await this.service.create(req.body);
+        const { body } = req;
+        const data = await this.service.create(body);
         res.status(httpStatus.CREATED).send(data);
       })
     );
@@ -93,13 +92,14 @@ module.exports = class Controller {
     this.router.put(
       routes.UPDATE,
       this.middleware.auth.isLoggedIn,
-      this.middleware.validation.validateWithModel(
-        this.model,
-        this.validationScope.UPDATE
+      this.middleware.validation.validateRequestData(
+        this.validationObject,
+        scopes.UPDATE
       ),
       functions.helpers.asyncWrapper(async (req, res, next) => {
         const { id } = req.params;
-        const updatedData = await this.service.update(id, req.body);
+        const { body } = req;
+        const updatedData = await this.service.update(id, body);
         res.send(updatedData);
       })
     );
