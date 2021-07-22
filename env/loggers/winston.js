@@ -59,13 +59,12 @@ if (process.env.NODE_ENV === 'production') {
 
   let commonOptions = {
     exitOnError: false,
-    transports: [console],
   };
 
   options = {
     ...commonOptions,
     level: 'info',
-    transports: [file],
+    transports: [file, console],
     exceptionHandlers: [exceptionFile],
     rejectionHandlers: [promiseRejectionFile],
     format: combine(...formatArgs),
@@ -74,6 +73,7 @@ if (process.env.NODE_ENV === 'production') {
   options = {
     ...commonOptions,
     level: 'debug',
+    transports: [console],
     format: combine(...formatArgs, colorize({ all: true })),
   };
 }
