@@ -33,6 +33,12 @@ const formatArgs = [
   printf(printFunction),
 ];
 
+let commonOptions = {
+  exitOnError: false,
+};
+
+const console = new winston.transports.Console({ handleExceptions: true });
+
 if (process.env.NODE_ENV === 'production') {
   const errorsFilesOptions = {
     dirname: `${appRoot}/logs`,
@@ -54,12 +60,6 @@ if (process.env.NODE_ENV === 'production') {
     ...errorsFilesOptions,
     filename: 'rejection.log',
   });
-
-  const console = new winston.transports.Console({ handleExceptions: true });
-
-  let commonOptions = {
-    exitOnError: false,
-  };
 
   options = {
     ...commonOptions,
