@@ -21,10 +21,10 @@ const addAppMiddleware = (app) => {
   app.use(morgan);
   app.use(helmet());
 
+  // for production on heroku
   if (process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1);
   }
-
   app.use(sessions);
   app.use(passport.initialize());
   app.use(passport.session());
