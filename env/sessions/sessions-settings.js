@@ -10,7 +10,6 @@ const options = {
   resave: false,
   cookie: {
     httpOnly: true,
-    //secure: process.env.NODE_ENV === 'production', // use when tls in enabled
     maxAge: parseInt(process.env.SESSIONS_COOKIE_LIFE_TIME) * 1000, // 3 days
   },
   store: new mongoStore({
@@ -19,5 +18,10 @@ const options = {
     ttl: parseInt(process.env.SESSIONS_COOKIE_LIFE_TIME), // 3 days
   }),
 };
+
+if (process.env.NODE_ENV === 'production') {
+  options.cookie.sameSite = 'none';
+  options.cookie.secure = true;
+}
 
 module.exports = sessions(options);
