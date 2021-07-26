@@ -21,7 +21,7 @@ const options = {
 
 if (process.env.NODE_ENV === 'production') {
   options.cookie.sameSite = 'none';
-  // options.cookie.secure = true;
+  options.cookie.secure = true;
 }
 
 module.exports = sessions(options);
