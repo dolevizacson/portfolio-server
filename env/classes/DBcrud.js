@@ -7,21 +7,11 @@ module.exports = class DBcrud {
   }
 
   async readAllActive() {
-    const data = await this.Model.find({ active: true }, { active: 0 });
-    if (!data.length) {
-      throw new NotFoundInDatabaseError('No objects in database collection');
-    } else {
-      return data;
-    }
+    return await this.Model.find({ active: true }, { active: 0 });
   }
 
   async readAll() {
-    const data = await this.Model.find({});
-    if (!data.length) {
-      throw new NotFoundInDatabaseError('No objects in database collection');
-    } else {
-      return data;
-    }
+    return await this.Model.find({});
   }
 
   async readOneActive(id) {
