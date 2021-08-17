@@ -27,7 +27,7 @@ module.exports = {
   }),
 
   [scopes.UPDATE]: Joi.object().keys({
-    _id: Joi.string().required(),
+    _id: Joi.string(),
     active: Joi.number(),
     date: Joi.date(),
     update: Joi.date(),
@@ -36,13 +36,14 @@ module.exports = {
     paragraph: Joi.array()
       .items(
         Joi.object().keys({
-          _id: Joi.string().required(),
+          _id: Joi.string(),
           header: Joi.string().allow(''),
           content: Joi.string().required(),
         })
       )
       .min(1),
     conclusion: Joi.object().keys({
+      _id: Joi.string(),
       header: Joi.string().allow(''),
       content: Joi.string().allow(''),
     }),

@@ -21,7 +21,7 @@ module.exports = {
   }),
 
   [scopes.UPDATE]: Joi.object().keys({
-    _id: Joi.string().required(),
+    _id: Joi.string(),
     active: Joi.number(),
     date: Joi.date(),
     update: Joi.date(),
@@ -29,7 +29,7 @@ module.exports = {
     stack: Joi.array()
       .items(
         Joi.object().keys({
-          _id: Joi.string().required(),
+          _id: Joi.string(),
           language: Joi.string().required(),
           longData: Joi.array().items(Joi.string()).min(1),
         })

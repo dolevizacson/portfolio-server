@@ -22,7 +22,7 @@ module.exports = {
   }),
 
   [scopes.UPDATE]: Joi.object().keys({
-    _id: Joi.string().required(),
+    _id: Joi.string(),
     active: Joi.number(),
     date: Joi.date(),
     update: Joi.date(),
@@ -32,6 +32,7 @@ module.exports = {
     technologies: Joi.array().items(Joi.string()).min(1),
     links: Joi.array().items(
       Joi.object().keys({
+        _id: Joi.string(),
         name: Joi.string().required(),
         url: Joi.string().required(),
       })

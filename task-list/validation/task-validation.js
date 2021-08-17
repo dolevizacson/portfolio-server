@@ -13,7 +13,7 @@ module.exports = {
   }),
 
   [scopes.UPDATE]: Joi.object().keys({
-    _id: Joi.string().required(),
+    _id: Joi.string(),
     active: Joi.number(),
     date: Joi.date(),
     update: Joi.date(),
